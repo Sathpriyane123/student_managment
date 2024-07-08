@@ -1,5 +1,3 @@
-// App.js
-
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import './App.css';
@@ -42,6 +40,15 @@ const App = () => {
   const handleInputChange = (e) => {
     const { name, value } = e.target;
     setNewStudent({ ...newStudent, [name]: value });
+  };
+
+  const handleFormSubmit = (e) => {
+    e.preventDefault();
+    if (selectedStudent) {
+      handleUpdateStudent();
+    } else {
+      handleAddStudent();
+    }
   };
 
   const handleAddStudent = () => {
@@ -117,56 +124,107 @@ const App = () => {
 
       {/* Form Container */}
       <div className="form-container">
-        <div className="form-inputs">
-          <input type="text" name="first_name" placeholder="First name" value={newStudent.first_name} onChange={handleInputChange} />
-          <input type="text" name="last_name" placeholder="Last name" value={newStudent.last_name} onChange={handleInputChange} />
-          <input type="text" name="age" placeholder="Age" value={newStudent.age} onChange={handleInputChange} />
-          <select name="gender" value={newStudent.gender} onChange={handleInputChange} className='form-control'>
-            <option value="">Select Gender</option>
-            <option value="Male">Male</option>
-            <option value="Female">Female</option>
-            <option value="Other">Other</option>
-          </select>
-          <select name="grade" value={newStudent.grade} onChange={handleInputChange} className='form-control'>
-            <option value="">Select Grade</option>
-            <option value="A+">A+</option>
-            <option value="A">A</option>
-            <option value="B+">B+</option>
-            <option value="B">C</option>
-            <option value="C+">C+</option>
-            <option value="C">C</option>
-            <option value="P">P</option>
-            <option value="F">F</option>
-
-            {/* Add more options as needed */}
-          </select>
-          <textarea name="address" placeholder="Address" value={newStudent.address} onChange={handleInputChange} />
-          <input type="text" name="contact_number" placeholder="Contact Number" value={newStudent.contact_number} onChange={handleInputChange} />
-
-          <div className="form-buttons">
-            {selectedStudent ? (
-              <>
-                <button onClick={handleUpdateStudent}>Update</button>
-                <button onClick={handleCancelUpdateStudent}>Cancel</button>
-              </>
-            ) : (
-              <button onClick={handleAddStudent}>Add New Student</button>
-            )}
+        <form onSubmit={handleFormSubmit}>
+          <div className="form-inputs">
+            <input
+              type="text"
+              name="first_name"
+              placeholder="First name"
+              value={newStudent.first_name}
+              onChange={handleInputChange}
+            />
+            <input
+              type="text"
+              name="last_name"
+              placeholder="Last name"
+              value={newStudent.last_name}
+              onChange={handleInputChange}
+            />
+            <input
+              type="text"
+              name="age"
+              placeholder="Age"
+              value={newStudent.age}
+              onChange={handleInputChange}
+            />
+            <select
+              name="gender"
+              value={newStudent.gender}
+              onChange={handleInputChange}
+              className="form-control"
+            >
+              <option value="">Select Gender</option>
+              <option value="Male">Male</option>
+              <option value="Female">Female</option>
+              <option value="Other">Other</option>
+            </select>
+            <select
+              name="grade"
+              value={newStudent.grade}
+              onChange={handleInputChange}
+              className="form-control"
+            >
+              <option value="">Select Grade</option>
+              <option value="A+">A+</option>
+              <option value="A">A</option>
+              <option value="B+">B+</option>
+              <option value="B">C</option>
+              <option value="C+">C+</option>
+              <option value="C">C</option>
+              <option value="P">P</option>
+              <option value="F">F</option>
+              {/* Add more options as needed */}
+            </select>
+            <textarea
+              name="address"
+              placeholder="Address"
+              value={newStudent.address}
+              onChange={handleInputChange}
+            />
+            <input
+              type="text"
+              name="contact_number"
+              placeholder="Contact Number"
+              value={newStudent.contact_number}
+              onChange={handleInputChange}
+            />
+            <div className="form-buttons">
+              {selectedStudent ? (
+                <>
+                  <button type="button" onClick={handleUpdateStudent}>
+                    Update
+                  </button>
+                  <button type="button" onClick={handleCancelUpdateStudent}>
+                    Cancel
+                  </button>
+                </>
+              ) : (
+                <button type="submit">Add New Student</button>
+              )}
+            </div>
           </div>
-        </div>
+        </form>
       </div>
 
       {/* Student List */}
       <ul className="student-list">
-        {students.map(student => (
+        {students.map((student) => (
           <li key={student.id}>
             <div>
-              <strong>{student.first_name} {student.last_name}</strong>
+              <strong>
+                {student.first_name} {student.last_name}
+              </strong>
             </div>
             <div className="actions">
-              <button className="view" onClick={() => handleViewClick(student.id)}>View</button>
-              <button className="edit" onClick={() => handleEditClick(student)}>Edit</button>
-              <button className="delete" onClick={() => handleDeleteStudent(student.id)}>Delete</button>
+              <button className="view" onClick={() => handleViewClick(student.id)}>
+                View
+              </button>
+              <button className="edit" onClick={() => handleEditClick(student)}>
+                Edit
+              </button>
+              <button className="delete" onClick={() => handleDeleteStudent(student.id)}>
+                Delete
+              </button>
             </div>
           </li>
         ))}
@@ -175,7 +233,9 @@ const App = () => {
       {/* Single View */}
       {openView && (
         <div className="outer-box">
-          <strong>{toView.first_name} {toView.last_name}</strong>
+          <strong>
+            {toView.first_name} {toView.last_name}
+          </strong>
           <br />
           <span>Age: {toView.age}</span>
           <br />
