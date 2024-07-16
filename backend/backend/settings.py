@@ -75,6 +75,7 @@ TEMPLATES = [
     },
 ]
 
+# backend/settings.py
 WSGI_APPLICATION = 'backend.wsgi.application'
 
 

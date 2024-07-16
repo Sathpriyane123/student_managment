@@ -1,5 +1,11 @@
 import React, { useState, useEffect } from 'react';
-import axios from 'axios';
+import {
+  fetchStudents,
+  addStudent,
+  getStudent,
+  updateStudent,
+  deleteStudent
+} from './services/Api';
 import './App.css';
 
 const App = () => {
@@ -26,15 +32,16 @@ const App = () => {
   const [openView, setOpenView] = useState(false);
 
   useEffect(() => {
-    fetchStudents();
+    fetchAllStudents();
   }, []);
 
-  const fetchStudents = () => {
-    axios.get('http://127.0.0.1:8000/api/students/')
-      .then(response => {
-        setStudents(response.data);
-      })
-      .catch(error => console.error(error));
+  const fetchAllStudents = async () => {
+    try {
+      const response = await fetchStudents();
+      setStudents(response.data);
+    } catch (error) {
+      console.error(error);
+    }
   };
 
   const handleInputChange = (e) => {
@@ -51,27 +58,24 @@ const App = () => {
     }
   };
 
-  const handleAddStudent = () => {
-    axios.post('http://127.0.0.1:8000/api/students/', newStudent)
-      .then(response => {
-        setStudents([...students, response.data]);
-        setNewStudent({
-          first_name: '',
-          last_name: '',
-          age: '',
-          gender: '',
-          grade: '',
-          address: '',
-          contact_number: '',
-        });
-      })
-      .catch(error => console.error(error));
+  const handleAddStudent = async () => {
+    try {
+      const response = await addStudent(newStudent);
+      setStudents([...students, response.data]);
+      resetForm();
+    } catch (error) {
+      console.error(error);
+    }
   };
 
   const handleViewClick = async (id) => {
-    const response = await axios.get(`http://127.0.0.1:8000/api/students/${id}/`);
-    setToView(response.data);
-    setOpenView(true);
+    try {
+      const response = await getStudent(id);
+      setToView(response.data);
+      setOpenView(true);
+    } catch (error) {
+      console.error(error);
+    }
   };
 
   const handleEditClick = (student) => {
@@ -79,26 +83,32 @@ const App = () => {
     setNewStudent(student);
   };
 
-  const handleUpdateStudent = () => {
-    axios.put(`http://127.0.0.1:8000/api/students/${selectedStudent.id}/`, newStudent)
-      .then(response => {
-        fetchStudents();
-        setNewStudent({
-          first_name: '',
-          last_name: '',
-          age: '',
-          gender: '',
-          grade: '',
-          address: '',
-          contact_number: '',
-        });
-        setSelectedStudent(null);
-      })
-      .catch(error => console.error(error));
+  const handleUpdateStudent = async () => {
+    try {
+      await updateStudent(selectedStudent.id, newStudent);
+      fetchAllStudents();
+      resetForm();
+      setSelectedStudent(null);
+    } catch (error) {
+      console.error(error);
+    }
   };
 
   const handleCancelUpdateStudent = () => {
     setSelectedStudent(null);
+    resetForm();
+  };
+
+  const handleDeleteStudent = async (id) => {
+    try {
+      await deleteStudent(id);
+      fetchAllStudents();
+    } catch (error) {
+      console.error(error);
+    }
+  };
+
+  const resetForm = () => {
     setNewStudent({
       first_name: '',
       last_name: '',
@@ -110,19 +120,10 @@ const App = () => {
     });
   };
 
-  const handleDeleteStudent = (id) => {
-    axios.delete(`http://127.0.0.1:8000/api/students/${id}/`)
-      .then(response => {
-        fetchStudents();
-      })
-      .catch(error => console.error(error));
-  };
-
   return (
     <div className="app-container">
       <h1>Student Management System</h1>
 
-      {/* Form Container */}
       <div className="form-container">
         <form onSubmit={handleFormSubmit}>
           <div className="form-inputs">
@@ -168,12 +169,11 @@ const App = () => {
               <option value="A+">A+</option>
               <option value="A">A</option>
               <option value="B+">B+</option>
-              <option value="B">C</option>
+              <option value="B">B</option>
               <option value="C+">C+</option>
               <option value="C">C</option>
               <option value="P">P</option>
               <option value="F">F</option>
-              {/* Add more options as needed */}
             </select>
             <textarea
               name="address"
@@ -206,7 +206,6 @@ const App = () => {
         </form>
       </div>
 
-      {/* Student List */}
       <ul className="student-list">
         {students.map((student) => (
           <li key={student.id}>
@@ -230,7 +229,6 @@ const App = () => {
         ))}
       </ul>
 
-      {/* Single View */}
       {openView && (
         <div className="outer-box">
           <strong>
