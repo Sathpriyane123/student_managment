@@ -21,3 +21,25 @@ export const updateStudent = async (id, updatedStudent) => {
 export const deleteStudent = async (id) => {
     return await axios.delete(`${BASE_URL}/students/${id}/`);
 };
+
+export const userSignup = async (data) => {
+    try {
+        const response = await axios.post(`${BASE_URL}/register/`, data);
+        return response;
+    } catch (error) {
+        throw error;
+    }
+};
+
+export const userLogin = async (data) => {
+    try {
+        const response = await axios.post(`${BASE_URL}/login/`, data);
+        return response;
+    } catch (error) {
+        throw error;
+    }
+};
+
+export const userLogout = async (data) => {
+    return await axios.post(`${BASE_URL}/logout/`, data);
+};
